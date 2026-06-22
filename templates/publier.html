@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Publier une annonce — DakarAnnonces{% endblock %}
+
+{% block extra_css %}
+<style>
+.pub-container { max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; }
+.pub-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 2rem; }
+.pub-card h2 { font-size: 22px; color: #111; margin-bottom: 1.5rem; }
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: #444; margin-bottom: 6px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+  font-size: 14px; color: #333; font-family: inherit; transition: border-color 0.15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: #1a6b3a; box-shadow: 0 0 0 3px rgba(26,107,58,0.1);
+}
+.form-group textarea { height: 120px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-check { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #333; }
+.form-check input { width: auto; accent-color: #1a6b3a; }
+.required { color: #c62828; }
+.btn-submit { width: 100%; background: #1a6b3a; color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+.btn-submit:hover { background: #155730; }
+.tip { font-size: 12px; color: #888; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pub-container">
+  <a href="/" style="font-size:13px;color:#1a6b3a;display:inline-block;margin-bottom:1rem;">← Retour</a>
+  <div class="pub-card">
+    <h2>📝 Publier une annonce</h2>
+    <form method="post" action="/publier">
+      <div class="form-group">
+        <label>Titre de l'annonce <span class="required">*</span></label>
+        <input type="text" name="titre" placeholder="Ex: iPhone 13 128Go comme neuf" required maxlength="100">
+        <p class="tip">Soyez précis et descriptif pour attirer plus d'acheteurs</p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Catégorie <span class="required">*</span></label>
+          <select name="categorie" required>
+            <option value="">Choisir une catégorie</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Région <span class="required">*</span></label>
+          <select name="region" required>
+            <option value="">Choisir une région</option>
+            {% for r in regions %}
+            <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prix <span class="required">*</span></label>
+          <input type="text" name="prix" placeholder="Ex: 150 000 FCFA ou Négociable" required>
+        </div>
+        <div class="form-group">
+          <label>État <span class="required">*</span></label>
+          <select name="etat">
+            <option value="Neuf">Neuf</option>
+            <option value="Occasion">Occasion</option>
+            <option value="Reconditionné">Reconditionné</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description <span class="required">*</span></label>
+        <textarea name="description" placeholder="Décrivez votre article en détail : état, caractéristiques, raison de la vente..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Numéro de téléphone <span class="required">*</span></label>
+        <input type="text" name="telephone" placeholder="Ex: +221 77 123 4567" required>
+        <p class="tip">Les acheteurs vous contacteront par ce numéro</p>
+      </div>
+
+      <div class="form-group">
+        <div class="form-check">
+          <input type="checkbox" name="urgent" id="urgent">
+          <label for="urgent">🔥 Marquer comme urgent</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Publier l'annonce gratuitement</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

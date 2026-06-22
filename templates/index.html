@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}DakarAnnonces — Petites annonces au Sénégal{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero { background: linear-gradient(135deg, #1a6b3a 0%, #0f4a28 100%); padding: 2.5rem 2rem; text-align: center; color: #fff; }
+.hero h1 { font-size: 28px; margin-bottom: 8px; }
+.hero p { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 1.5rem; }
+.search-form { display: flex; gap: 8px; max-width: 700px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+.search-form input, .search-form select { padding: 10px 14px; border: none; border-radius: 6px; font-size: 14px; }
+.search-form input { flex: 1; min-width: 200px; }
+.search-form button { background: #f0c040; color: #1a3d20; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer; }
+.search-form button:hover { background: #e0b030; }
+
+.cats { display: flex; gap: 8px; padding: 1rem 2rem; overflow-x: auto; background: #fff; border-bottom: 1px solid #e0e0e0; }
+.cat-link { white-space: nowrap; padding: 6px 14px; border-radius: 999px; border: 1px solid #ccc; font-size: 13px; color: #555; transition: all 0.15s; }
+.cat-link:hover, .cat-link.active { background: #1a6b3a; color: #fff; border-color: #1a6b3a; }
+
+.layout { display: flex; gap: 0; max-width: 1200px; margin: 1.5rem auto; padding: 0 1.5rem; }
+
+.sidebar { width: 230px; flex-shrink: 0; margin-right: 1.5rem; }
+.filter-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+.filter-title { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.filter-card label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333; padding: 4px 0; cursor: pointer; }
+.filter-card input[type=radio], .filter-card input[type=checkbox] { accent-color: #1a6b3a; }
+.filter-card select { width: 100%; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; color: #333; }
+.btn-filter { width: 100%; background: #1a6b3a; color: #fff; border: none; padding: 9px; border-radius: 6px; font-size: 13px; cursor: pointer; margin-top: 6px; font-weight: 600; }
+
+.listings { flex: 1; }
+.listings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.listings-count { font-size: 13px; color: #666; }
+.sort-select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; color: #333; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+
+.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; transition: box-shadow 0.15s, border-color 0.15s; }
+.card:hover { border-color: #1a6b3a; box-shadow: 0 4px 16px rgba(26,107,58,0.12); }
+.card-img { width: 100%; height: 120px; background: #f0f4ee; display: flex; align-items: center; justify-content: center; font-size: 44px; }
+.card-body { padding: 10px 12px; }
+.card-price { font-size: 15px; font-weight: 700; color: #1a6b3a; margin-bottom: 3px; }
+.card-title { font-size: 13px; color: #222; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-meta { font-size: 11px; color: #888; display: flex; align-items: center; gap: 6px; }
+.badge { padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+.badge-new { background: #d4edda; color: #155724; }
+.badge-urgent { background: #f8d7da; color: #721c24; }
+
+.empty { text-align: center; padding: 3rem; color: #888; }
+.empty-icon { font-size: 48px; margin-bottom: 1rem; }
+
+.pagination { display: flex; justify-content: center; gap: 6px; margin-top: 2rem; }
+.page-link { padding: 7px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; color: #333; background: #fff; }
+.page-link:hover { background: #f0f4ee; border-color: #1a6b3a; }
+.page-link.active { background: #1a6b3a; color: #fff; border-color: #1a6b3a; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>Achetez et vendez partout au Sénégal</h1>
+  <p>Des milliers d'annonces dans toutes les régions</p>
+  <form class="search-form" method="get" action="/">
+    <input type="text" name="q" value="{{ q }}" placeholder="Que recherchez-vous ?" />
+    <select name="region">
+      <option value="">Toutes les régions</option>
+      {% for r in regions %}
+      <option value="{{ r }}" {% if region == r %}selected{% endif %}>{{ r }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Rechercher</button>
+  </form>
+</div>
+
+<div class="cats">
+  <a href="/" class="cat-link {% if not categorie %}active{% endif %}">Tout</a>
+  {% for cat in categories %}
+  <a href="/?categorie={{ cat }}" class="cat-link {% if categorie == cat %}active{% endif %}">{{ cat }}</a>
+  {% endfor %}
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <form method="get" action="/">
+      <input type="hidden" name="q" value="{{ q }}">
+      <input type="hidden" name="categorie" value="{{ categorie }}">
+      <div class="filter-card">
+        <div class="filter-title">Région</div>
+        <select name="region">
+          <option value="">Toutes les régions</option>
+          {% for r in regions %}
+          <option value="{{ r }}" {% if region == r %}selected{% endif %}>{{ r }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">État</div>
+        <label><input type="radio" name="etat" value="" {% if not etat %}checked{% endif %}> Tous</label>
+        <label><input type="radio" name="etat" value="Neuf" {% if etat=='Neuf' %}checked{% endif %}> Neuf</label>
+        <label><input type="radio" name="etat" value="Occasion" {% if etat=='Occasion' %}checked{% endif %}> Occasion</label>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">Trier par</div>
+        <label><input type="radio" name="tri" value="recent" {% if tri=='recent' %}checked{% endif %}> Plus récentes</label>
+        <label><input type="radio" name="tri" value="ancien" {% if tri=='ancien' %}checked{% endif %}> Plus anciennes</label>
+      </div>
+      <div class="filter-card">
+        <button type="submit" class="btn-filter">Appliquer les filtres</button>
+      </div>
+    </form>
+  </aside>
+
+  <div class="listings">
+    <div class="listings-header">
+      <span class="listings-count"><strong>{{ total }}</strong> annonce{% if total > 1 %}s{% endif %} trouvée{% if total > 1 %}s{% endif %}</span>
+    </div>
+
+    {% if annonces %}
+    <div class="grid">
+      {% for a in annonces %}
+      <a href="/annonce/{{ a.id }}" class="card">
+        <div class="card-img">
+          {% if a.categorie == 'Immobilier' %}🏠
+          {% elif a.categorie == 'Véhicules' %}🚗
+          {% elif a.categorie == 'Électronique' %}📱
+          {% elif a.categorie == 'Emploi' %}💼
+          {% elif a.categorie == 'Mode' %}👗
+          {% elif a.categorie == 'Services' %}🔧
+          {% elif a.categorie == 'Meubles' %}🛋️
+          {% else %}📦{% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-price">{{ a.prix }}</div>
+          <div class="card-title">{{ a.titre }}</div>
+          <div class="card-meta">
+            📍 {{ a.region }}
+            {% if a.urgent %}<span class="badge badge-urgent">Urgent</span>{% endif %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% for p in range(1, total_pages + 1) %}
+      <a href="?q={{ q }}&categorie={{ categorie }}&region={{ region }}&etat={{ etat }}&tri={{ tri }}&page={{ p }}"
+         class="page-link {% if p == page %}active{% endif %}">{{ p }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">🔍</div>
+      <p>Aucune annonce trouvée. <a href="/" style="color:#1a6b3a">Voir toutes les annonces</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

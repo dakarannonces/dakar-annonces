@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}{{ annonce.titre }} — DakarAnnonces{% endblock %}
+
+{% block extra_css %}
+<style>
+.breadcrumb { padding: 12px 2rem; font-size: 13px; color: #888; background: #fff; border-bottom: 1px solid #eee; }
+.breadcrumb a { color: #1a6b3a; }
+
+.detail-layout { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; }
+
+.detail-main { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
+.detail-img { width: 100%; height: 260px; background: #f0f4ee; display: flex; align-items: center; justify-content: center; font-size: 80px; }
+.detail-body { padding: 1.5rem; }
+.detail-price { font-size: 26px; font-weight: 700; color: #1a6b3a; margin-bottom: 8px; }
+.detail-title { font-size: 20px; font-weight: 600; margin-bottom: 12px; color: #111; }
+.detail-badges { display: flex; gap: 8px; margin-bottom: 1rem; }
+.badge { padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.badge-cat { background: #e8f5e9; color: #1a6b3a; }
+.badge-etat { background: #e3f2fd; color: #1565c0; }
+.badge-urgent { background: #ffebee; color: #c62828; }
+.detail-desc { font-size: 14px; color: #444; line-height: 1.7; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem; }
+.detail-meta { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 13px; color: #888; }
+
+.contact-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; height: fit-content; }
+.contact-card h3 { font-size: 16px; color: #111; margin-bottom: 1rem; }
+.contact-phone { font-size: 20px; font-weight: 700; color: #1a6b3a; margin: 1rem 0; }
+.btn-contact { display: block; width: 100%; text-align: center; background: #1a6b3a; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+.btn-contact:hover { background: #155730; }
+.btn-delete { display: block; width: 100%; text-align: center; background: #fff; color: #c62828; padding: 10px; border-radius: 8px; font-size: 13px; border: 1px solid #f5c6cb; }
+.btn-delete:hover { background: #ffebee; }
+.detail-date { font-size: 12px; color: #aaa; margin-top: 1rem; text-align: center; }
+
+.back-link { display: inline-block; margin-bottom: 1rem; font-size: 13px; color: #1a6b3a; }
+.back-link:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">Accueil</a> › <a href="/?categorie={{ annonce.categorie }}">{{ annonce.categorie }}</a> › {{ annonce.titre }}
+</div>
+
+<div class="detail-layout">
+  <div>
+    <a href="/" class="back-link">← Retour aux annonces</a>
+    <div class="detail-main">
+      <div class="detail-img">
+        {% if annonce.categorie == 'Immobilier' %}🏠
+        {% elif annonce.categorie == 'Véhicules' %}🚗
+        {% elif annonce.categorie == 'Électronique' %}📱
+        {% elif annonce.categorie == 'Emploi' %}💼
+        {% elif annonce.categorie == 'Mode' %}👗
+        {% elif annonce.categorie == 'Services' %}🔧
+        {% elif annonce.categorie == 'Meubles' %}🛋️
+        {% else %}📦{% endif %}
+      </div>
+      <div class="detail-body">
+        <div class="detail-price">{{ annonce.prix }}</div>
+        <div class="detail-title">{{ annonce.titre }}</div>
+        <div class="detail-badges">
+          <span class="badge badge-cat">{{ annonce.categorie }}</span>
+          <span class="badge badge-etat">{{ annonce.etat }}</span>
+          {% if annonce.urgent %}<span class="badge badge-urgent">🔥 Urgent</span>{% endif %}
+        </div>
+        <div class="detail-meta">
+          <span>📍 {{ annonce.region }}</span>
+          <span>📅 {{ annonce.created_at[:10] }}</span>
+        </div>
+        <div class="detail-desc">
+          <strong>Description</strong><br><br>
+          {{ annonce.description }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="contact-card">
+      <h3>Contacter le vendeur</h3>
+      <p style="font-size:13px;color:#666;">Pour cette annonce :</p>
+      <div class="contact-phone">📞 {{ annonce.telephone }}</div>
+      <a href="tel:{{ annonce.telephone }}" class="btn-contact">Appeler maintenant</a>
+      <a href="https://wa.me/{{ annonce.telephone | replace(' ', '') | replace('+', '') }}" target="_blank" class="btn-contact" style="background:#25d366;">💬 WhatsApp</a>
+      <hr style="margin:1rem 0;border:none;border-top:1px solid #eee;">
+      <a href="/supprimer/{{ annonce.id }}" class="btn-delete" onclick="return confirm('Supprimer cette annonce ?')">🗑 Supprimer l\'annonce</a>
+      <div class="detail-date">Publiée le {{ annonce.created_at[:10] }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
